@@ -29,14 +29,6 @@ class Student extends Model
         return $this->hasMany(Attendance::class);
      }
 
-     public function behaviorRecords(){
-        return $this->hasMany(Behavior_record::class);
-     }
-
-     public function aiEvents()
-{
-    return $this->hasMany(Ai_event::class);
-}
 
     public function marks(){
         return $this->hasMany(Mark::class);
@@ -85,5 +77,35 @@ class Student extends Model
 
         $student->code = $code;
     });
+}
+
+
+public function behaviorEvents()
+{
+    return $this->hasMany(BehaviorEvent::class);
+}
+
+public function aggressionEvents()
+{
+    return $this->hasMany(AggressionEvent::class);
+}
+
+public function kinematicEvents()
+{
+    return $this->hasMany(KinematicEvent::class);
+}
+
+public function sessionCheckpoints()
+{
+    return $this->hasMany(SessionCheckpoint::class);
+}
+
+public function dailySummaries()
+{
+    return $this->hasMany(DailySummary::class);
+}
+
+public function photos(){
+    return $this->hasMany(StudentPhoto::class);
 }
 }

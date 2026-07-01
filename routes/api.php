@@ -34,6 +34,9 @@ Route::middleware('auth:sanctum')->group(function(){
         // Route::put('/permissions',[StudentPermissionController::class,'update']);
         // Route::delete('/permissions',[StudentPermissionController::class,'destroy']);
 
+        Route::get('/reports',[TestController::class,'index']);
+
+
         Route::get('/notifications', [StudentController::class,'getNotifications']);
 
         Route::get('/books',[BookController::class,'index']);
@@ -49,6 +52,16 @@ Route::post('/events/behavior',[TestController::class,'behavior']);
 Route::post('/events/aggression',[TestController::class,'aggression']);
 Route::post('/events/kinematic',[TestController::class,'kinematic']);
 Route::post('/checkpoints/store',[TestController::class,'checkpoints']);
-Route::post('/reports/store',[TestController::class,'reports']);
+Route::post('/reports/store',[TestController::class,'storeReport']);
+Route::get('/checkpoints/today', [TestController::class, 'today']);
+Route::post('/daily-summaries/store', [TestController::class, 'store']);
+Route::delete('/checkpoints/purge', [TestController::class, 'purge']);
+Route::get(
+    '/daily-summaries/unreported',[TestController::class, 'unreported']
+);
+Route::get('/students/enrollment-data',[TestController::class,'getPhotos']);
 
 
+// Route::get('/cors-test', function () {
+//     return response()->json(['ok' => true]);
+// });

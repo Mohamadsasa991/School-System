@@ -8,6 +8,8 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -26,6 +28,7 @@ class StudentsTable
                 TextColumn::make('code')
                     ->searchable()
                     ->copyable(),
+                    ImageColumn::make('photos'),
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('address')
@@ -33,6 +36,7 @@ class StudentsTable
                 TextColumn::make('class_id')
                     ->numeric()
                     ->sortable(),
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

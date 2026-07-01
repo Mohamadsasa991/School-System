@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Students;
 use App\Filament\Resources\Students\Pages\CreateStudent;
 use App\Filament\Resources\Students\Pages\EditStudent;
 use App\Filament\Resources\Students\Pages\ListStudents;
+use App\Filament\Resources\Students\RelationManagers\PhotosRelationManager;
 use App\Filament\Resources\Students\Schemas\StudentForm;
 use App\Filament\Resources\Students\Tables\StudentsTable;
 use App\Models\Student;
@@ -35,11 +36,11 @@ class StudentResource extends Resource
     }
 
     public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
+{
+    return [
+        PhotosRelationManager::class,
+    ];
+}
 
     public static function getPages(): array
     {

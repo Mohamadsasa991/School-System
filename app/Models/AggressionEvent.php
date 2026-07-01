@@ -4,13 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Behavior_record extends Model
+class AggressionEvent extends Model
 {
     protected $fillable = [
-        'date','behavior_type','notes'
+        'student_id',
+        'label',
+        'timestamp',
     ];
 
-    public function student(){
+    public function student()
+    {
         return $this->belongsTo(Student::class);
     }
 }

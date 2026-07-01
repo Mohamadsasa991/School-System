@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ai_event extends Model
+class StudentPhoto extends Model
 {
     protected $fillable = [
-        'description','event_type',''
+        'student_id','photo_path'
     ];
 
     public function student()
-{
-    return $this->belongsTo(Student::class);
-}
+    {
+        return $this->belongsTo(Student::class);
+    }
 }
