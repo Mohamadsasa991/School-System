@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\AttendanceChart;
+use App\Filament\Widgets\ClassDistributionChart;
 use App\Filament\Widgets\LatestPermissions;
 use App\Filament\Widgets\SchoolStats;
 use Filament\Http\Middleware\Authenticate;
@@ -42,6 +44,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
             SchoolStats::class,
+            AttendanceChart::class,
+            ClassDistributionChart::class,
             LatestPermissions::class
             ])
             ->middleware([
