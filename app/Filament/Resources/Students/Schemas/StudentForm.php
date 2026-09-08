@@ -28,6 +28,12 @@ class StudentForm
                 Select::make('class_id')
                 ->relationship('Schoolclass', 'name')
                 ->required(),
+                FileUpload::make('photos')
+                    ->image()
+                    ->multiple()
+                    ->directory('students/photos')
+                    ->maxSize(1024)
+                    ->label('Student Photos'),
             ]);
     }
 }

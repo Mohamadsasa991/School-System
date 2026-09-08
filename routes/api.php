@@ -62,6 +62,3 @@ Route::get(
 Route::get('/students/enrollment-data',[TestController::class,'getPhotos']);
 
 
-// Route::get('/cors-test', function () {
-//     return response()->json(['ok' => true]);
-// });

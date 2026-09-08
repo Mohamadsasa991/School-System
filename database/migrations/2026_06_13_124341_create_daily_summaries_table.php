@@ -53,7 +53,7 @@ return new class extends Migration
     'summary_date'
 ]);
 
-    $table->timestamp('report_generated_at')->nullable();
+            $table->timestamp('report_generated_at')->nullable();
             $table->timestamps();
         });
     }

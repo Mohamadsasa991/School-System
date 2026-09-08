@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Resources\DailySummaryResource;
 use App\Http\Resources\StudentEnrollmentResource;
 use App\Models\AggressionEvent;
 use App\Models\BehaviorEvent;
@@ -8,12 +9,18 @@ use App\Models\DailySummary;
 use App\Models\KinematicEvent;
 use App\Models\SessionCheckpoint;
 use App\Models\Student;
+use App\Traits\HttpResponces;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use function Illuminate\Support\now;
 
 class TestController extends Controller
 {
+    use HttpResponces;
+    // public function vv(){
+    //     $data = DailySummary::all();
+    //     return $data;
+    // }
     public function behavior(Request $request)
     {
       $data = $request->validate([
@@ -88,77 +95,47 @@ class TestController extends Controller
         ], 201);
     }
 
-    public function index($student_id){
-    $summaries = DailySummary::when($student_id, function ($query) use ($student_id) {
-            $query->where('student_id', $student_id);
-        })
+    public function index($student_id)
+{
+    $parent = auth()->user();
+
+    $student = $parent->students()
+        ->where('student_id', $student_id)
+        ->first();
+
+    if (!$student) {
+        return response()->json([
+            'message' => 'Student does not exist',
+        ], 404);
+    }
+
+    $summaries = DailySummary::where('student_id', $student_id)
+        ->where('review_status', 'APPROVED')
         ->orderBy('summary_date', 'desc')
         ->get();
 
     return response()->json([
-        'message' => 'Summaries fetched successfully',
-        'data'    => $summaries,
-    ]);
-    }
-
-      public function reports(Request $request)
-    {
-
-        $validated = $request->validate([
-            'student_id' => ['required','exists:students,id'],
-            'summary_date' => ['required','date'],
-
-            'avg_participating_count' => ['nullable','numeric'],
-            'avg_not_paying_count' => ['nullable','numeric'],
-            'avg_state_transitions' => ['nullable','numeric'],
-            'avg_recovery_latency_s' => ['nullable','numeric'],
-
-            'max_inattention_streak' => ['nullable','integer'],
-
-            'total_aggression_events' => ['nullable','integer'],
-            'max_aggression_in_window' => ['nullable','integer'],
-
-            'total_wrist_oscillations' => ['nullable','integer'],
-            'total_body_sway_events' => ['nullable','integer'],
-
-            'observation_window_minutes' => ['nullable','numeric'],
-
-            'staff_report_text' => ['nullable','string'],
-            'parent_report_text' => ['nullable','string'],
-
-            'report_generated_at' => ['nullable','date'],
-            'generated_at' => ['nullable','date'],
-
-            'review_status' => ['nullable','string'],
-        ]);
-
-        $summary = DailySummary::updateOrCreate(
-            [
-                'student_id' => $validated['student_id'],
-                'summary_date' => $validated['summary_date'],
-            ],
-            $validated
-        );
-
-        return response()->json([
-            'message' => 'Daily summary stored successfully',
-            'data' => $summary,
-        ], 201);
-    }
+        'message' => $summaries->isEmpty()
+            ? 'There are no approved reports for now'
+            : 'Summaries fetched successfully',
+        'data' => $summaries,
+    ], 200);
+}
 
 
-    public function storeReport(Request $request)
+
+public function storeReport(Request $request)
 {
     $validated = $request->validate([
-        'summary_id'         => 'required|integer|exists:daily_summaries,id',
-        'staff_report_text'  => 'required|string',
-        'parent_report_text' => 'required|string',
+        'summary_id'          => 'required|integer|exists:daily_summaries,id',
+        'staff_report_json'   => 'required|array',
+        'parent_report_json'  => 'required|array',
     ]);
 
     $summary = DailySummary::findOrFail($validated['summary_id']);
     $summary->update([
-        'staff_report_text'   => $validated['staff_report_text'],
-        'parent_report_text'  => $validated['parent_report_text'],
+        'staff_report_json'   => $validated['staff_report_json'],
+        'parent_report_json'  => $validated['parent_report_json'],
         'report_generated_at' => now(),
     ]);
 
@@ -167,6 +144,7 @@ class TestController extends Controller
         'data'    => $summary,
     ]);
 }
+
 
     public function today(Request $request){
         $request->validate([
@@ -238,23 +216,19 @@ class TestController extends Controller
 
 }
 
+
+
 public function unreported(Request $request)
 {
-    $request->validate([
-        'date' => 'required|date'
-    ]);
+    $request->validate(['date' => 'required|date']);
 
-    $summaries = DailySummary::where(
-        'summary_date',
-        $request->date
-    )
-    ->whereNull('staff_report_text')
-    ->get();
+    $summaries = DailySummary::whereDate('summary_date', $request->date)
+        ->whereNull('staff_report_json')
+        ->get();
 
-    return response()->json([
-        'data' => $summaries
-    ]);
+    return response()->json(['data' => $summaries]);
 }
+
 
 public function getPhotos(Request $request){
     return StudentEnrollmentResource::collection(
